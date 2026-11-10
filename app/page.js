@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
@@ -114,18 +113,16 @@ export default function Home() {
         "stock_minimo",
         "stock_objetivo",
       ]) {
-        if (form[campo] === "" ||
-            !Number.isFinite(producto[campo]) ||
-            producto[campo] < 0) {
+        if (
+          form[campo] === "" ||
+          !Number.isFinite(producto[campo]) ||
+          producto[campo] < 0
+        ) {
           throw new Error("Ingresa valores numéricos válidos.");
         }
       }
 
-      for (const campo of [
-        "stock_actual",
-        "stock_minimo",
-        "stock_objetivo",
-      ]) {
+      for (const campo of ["stock_actual", "stock_minimo", "stock_objetivo"]) {
         if (!Number.isInteger(producto[campo])) {
           throw new Error("Las cantidades deben ser enteras.");
         }
@@ -220,19 +217,15 @@ export default function Home() {
 
   const total = productos.length;
 
-  const bajos = productos.filter(
-    (p) => p.stock_actual < p.stock_minimo
-  );
+  const bajos = productos.filter((p) => p.stock_actual < p.stock_minimo);
 
   const valorInventario = productos.reduce(
     (total, p) => total + Number(p.precio) * p.stock_actual,
-    0
+    0,
   );
 
   const filtrados = productos.filter((p) =>
-    `${p.nombre} ${p.codigo}`
-      .toLowerCase()
-      .includes(busqueda.toLowerCase())
+    `${p.nombre} ${p.codigo}`.toLowerCase().includes(busqueda.toLowerCase()),
   );
 
   const inputClass =
@@ -288,48 +281,60 @@ export default function Home() {
               {titulo}
             </button>
           ))}
+
+          {/* Nuevo módulo de movimientos */}
+          <a
+            href="/movimientos"
+            className="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-lg font-medium"
+          >
+            Movimientos de inventario
+          </a>
         </nav>
 
         {error && (
-          <div role="alert" className="bg-red-100 text-red-700 p-4 rounded-lg mb-5">
+          <div
+            role="alert"
+            className="bg-red-100 text-red-700 p-4 rounded-lg mb-5"
+          >
             {error}
           </div>
         )}
 
         {mensaje && (
-          <div role="status" className="bg-green-100 text-green-700 p-4 rounded-lg mb-5">
+          <div
+            role="status"
+            className="bg-green-100 text-green-700 p-4 rounded-lg mb-5"
+          >
             {mensaje}
           </div>
         )}
 
         {vista === "dashboard" && (
           <section>
-            <h2 className="text-2xl font-bold mb-5">
-              Panel de control
-            </h2>
+            <h2 className="text-2xl font-bold mb-5">Panel de control</h2>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
               {[
                 ["Productos registrados", total, "text-blue-600"],
                 ["Productos con stock bajo", bajos.length, "text-red-600"],
-                ["Valor del inventario", moneda(valorInventario), "text-green-600"],
+                [
+                  "Valor del inventario",
+                  moneda(valorInventario),
+                  "text-green-600",
+                ],
               ].map(([titulo, valor, color]) => (
                 <div
                   key={titulo}
                   className="bg-white p-6 rounded-xl shadow-sm border border-slate-200"
                 >
                   <p className="text-slate-500 mb-3">{titulo}</p>
-                  <p className={`text-3xl font-bold ${color}`}>
-                    {valor}
-                  </p>
+                  <p className={`text-3xl font-bold ${color}`}>{valor}</p>
                 </div>
               ))}
             </div>
 
             <div className="bg-white rounded-xl p-6 mt-6 border border-slate-200">
-              <h3 className="text-xl font-semibold mb-3">
-                Resumen operativo
-              </h3>
+              <h3 className="text-xl font-semibold mb-3">Resumen operativo</h3>
               <p>Productos disponibles: {total - bajos.length}</p>
               <p>Productos que requieren reposición: {bajos.length}</p>
 
@@ -345,9 +350,7 @@ export default function Home() {
 
         {vista === "productos" && (
           <section>
-            <h2 className="text-2xl font-bold mb-5">
-              Gestión de productos
-            </h2>
+            <h2 className="text-2xl font-bold mb-5">Gestión de productos</h2>
 
             <form
               onSubmit={guardarProducto}
@@ -441,7 +444,9 @@ export default function Home() {
                         "Estado",
                         "Acciones",
                       ].map((h) => (
-                        <th key={h} className="p-4">{h}</th>
+                        <th key={h} className="p-4">
+                          {h}
+                        </th>
                       ))}
                     </tr>
                   </thead>
@@ -454,11 +459,13 @@ export default function Home() {
                         <td className="p-4">{moneda(p.precio)}</td>
                         <td className="p-4">{p.stock_actual}</td>
                         <td className="p-4">
-                          <span className={
-                            p.stock_actual < p.stock_minimo
-                              ? "text-red-600 font-semibold"
-                              : "text-green-600 font-semibold"
-                          }>
+                          <span
+                            className={
+                              p.stock_actual < p.stock_minimo
+                                ? "text-red-600 font-semibold"
+                                : "text-green-600 font-semibold"
+                            }
+                          >
                             {p.stock_actual < p.stock_minimo
                               ? "Stock bajo"
                               : "Disponible"}
@@ -510,16 +517,21 @@ export default function Home() {
                   className="bg-white border-l-4 border-red-500 rounded-xl p-5 mb-4 shadow-sm"
                 >
                   <h3 className="text-lg font-bold">{p.nombre}</h3>
-                  <p className="text-sm text-slate-500">
-                    Código: {p.codigo}
-                  </p>
+                  <p className="text-sm text-slate-500">Código: {p.codigo}</p>
 
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
-                    <p>Stock actual: <strong>{p.stock_actual}</strong></p>
-                    <p>Stock mínimo: <strong>{p.stock_minimo}</strong></p>
-                    <p>Stock objetivo: <strong>{p.stock_objetivo}</strong></p>
+                    <p>
+                      Stock actual: <strong>{p.stock_actual}</strong>
+                    </p>
+                    <p>
+                      Stock mínimo: <strong>{p.stock_minimo}</strong>
+                    </p>
+                    <p>
+                      Stock objetivo: <strong>{p.stock_objetivo}</strong>
+                    </p>
                     <p className="text-blue-700">
-                      Reponer: <strong>
+                      Reponer:{" "}
+                      <strong>
                         {Math.max(0, p.stock_objetivo - p.stock_actual)}
                       </strong>
                     </p>
@@ -533,4 +545,3 @@ export default function Home() {
     </div>
   );
 }
-
